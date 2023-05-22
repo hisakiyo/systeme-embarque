@@ -1,7 +1,7 @@
 # Nom du microcontrôleur
 MCU=atmega16u2
 # Nom de votre programme
-PROGRAM=prog
+PROGRAM=main
 # Outils de compilation
 CC=avr-gcc
 OBJCOPY=avr-objcopy
