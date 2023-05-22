@@ -26,7 +26,9 @@ $(PROGRAM).hex: $(PROGRAM).elf
 
 # Règle pour télécharger le programme sur le microcontrôleur
 download: $(PROGRAM).hex
-	$(AVRDUDE) $(AVRDUDE_FLAGS) -U flash:w:$<
+	dfu-programmer $(MCU) erase
+	dfu-programmer $(MCU) flash $(PROGRAM).hex
+	dfu-programmer $(MCU) reset
 
 # Règle pour nettoyer les fichiers générés
 clean:

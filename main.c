@@ -1,14 +1,22 @@
+
 #include <avr/io.h>
+#include <util/delay.h>
 
 int main(void){
-    DDRB |= 0x01;                // Sortie pour la LED
-    DDRB &= ~0x02;               // Entrée pour le bouton
-    PORTB |= 0x02;               // Configuration de la résistance de tirage
+    CLKSEL0 = 0600010101;
+    CLKSEL1 = 0b00001111;
+    CLKPR = 0b10000000;
+    CLKPR = 0;
 
+    DDRB |= 0x01;
+    PORTB |= 0x01;
+    
     while(1){
-        PORTB |= 0x01;
-        if(PINB & 0x02){
+        if((PINB & (1<<PB1)) == 0){
             PORTB &= ~0x01;
+        }
+        else{
+            PORTB |= 0x01;
         }
     }
 }
