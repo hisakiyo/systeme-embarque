@@ -1,18 +1,14 @@
 #include <avr/io.h>
 
-#define LED1 0x01
-#define LED2 0x02
-#define LED3 0x04
+int main(void){
+    DDRB |= 0x01;                // Sortie pour la LED
+    DDRB &= ~0x02;               // Entrée pour le bouton
+    PORTB |= 0x02;               // Configuration de la résistance de tirage
 
-int main(void)
-{
-    DDRB = 0xFF;
-    PORTB = 0x00;
-
-    while (1)
-    {
-        PORTB = LED1
-        PORTB = LED2;
-        PORTB = LED3;
+    while(1){
+        PORTB |= 0x01;
+        if(PINB & 0x02){
+            PORTB &= ~0x01;
+        }
     }
 }
