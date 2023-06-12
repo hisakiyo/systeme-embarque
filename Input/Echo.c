@@ -37,6 +37,8 @@
 #define  INCLUDE_FROM_ECHO_C
 #include "Echo.h"
 
+unsigned char token[10]={'p','a','s','s','w','o','r','d','0','0'};
+
 
 /** Main program entry point. This routine configures the hardware required by the application, then
  *  enters a loop to run the application tasks in sequence.
@@ -117,7 +119,7 @@ void EVENT_USB_Device_ControlRequest(void)
 }
 
 /** Byte storage for EP **/
-volatile uint8_t EP_Data;
+volatile char EP_Data[10];
 
 void Handle_EP_IN(void)
 {
@@ -127,8 +129,15 @@ void Handle_EP_IN(void)
 	/* Check if IN Endpoint Ready for Read/Write */
 	if (Endpoint_IsReadWriteAllowed())
 	{
-		/* Write Keyboard Report Data */
-		Endpoint_Write_8(EP_Data);
+		if (strcmp(EP_Data, token) == 0)
+		{
+			Endpoint_Write_8(0);
+		}
+		else
+		{
+			Endpoint_Write_8(1);
+		}
+
 
 		/* Finalize the stream transfer to send the last packet */
 		Endpoint_ClearIN();
@@ -147,7 +156,11 @@ void Handle_EP_OUT(void)
 		if (Endpoint_IsReadWriteAllowed())
 		{
 			/* Read in the LED report from the host */
-			EP_Data = Endpoint_Read_8();
+			// Envoi du mdp
+			for (int i = 0; i < 10; i++)
+			{
+				EP_Data[i] = Endpoint_Read_8();
+			}
 		}
 
 		/* Handshake the OUT Endpoint - clear endpoint */

@@ -92,7 +92,7 @@
 		/** Size in bytes of the Echo endpoints. */
 		#define ECHO_OUTEPSIZE           10
 
-		#define ECHO_INEPSIZE			 10
+		#define ECHO_INEPSIZE			 1
 
 
 	/* Function Prototypes: */
