@@ -50,6 +50,9 @@ int main(void)
 	CLKPR = 0b10000000;     // modification du diviseur d'horloge (CLKPCE=1)
 	CLKPR = 0;              // 0 pour pas de diviseur (diviseur de 1)
 
+	DDRB = 0b01111111; // set all pins on port B as output except for PB7
+	PORTB &= 0b10000000;
+
 	SetupHardware();
 
 	GlobalInterruptEnable();
@@ -121,26 +124,33 @@ void EVENT_USB_Device_ControlRequest(void)
 /** Byte storage for EP **/
 volatile char EP_Data[10];
 
+unsigned char present = 0;
+
 void Handle_EP_IN(void)
 {
 	/* Select the IN Endpoint */
 	Endpoint_SelectEndpoint(ECHO_IN_EPADDR);
 
 	/* Check if IN Endpoint Ready for Read/Write */
-	if (Endpoint_IsReadWriteAllowed())
+	if (Endpoint_IsReadWriteAllowed() && present)
 	{
-		if (strcmp(EP_Data, token) == 0)
+		if (strncmp(EP_Data, token, 10) == 0)
 		{
 			Endpoint_Write_8(0);
+			PORTB &= 0b10000000;
+			PORTB |= 0b00101010;
 		}
 		else
 		{
 			Endpoint_Write_8(1);
+			PORTB &= 0b10000000;
+			PORTB |= 0b01010101;
 		}
-
 
 		/* Finalize the stream transfer to send the last packet */
 		Endpoint_ClearIN();
+
+		present = 0;
 	}
 }
 
@@ -161,6 +171,8 @@ void Handle_EP_OUT(void)
 			{
 				EP_Data[i] = Endpoint_Read_8();
 			}
+
+			present = 1;
 		}
 
 		/* Handshake the OUT Endpoint - clear endpoint */

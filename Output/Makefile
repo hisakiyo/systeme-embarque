@@ -34,3 +34,4 @@ proj_echo: $(ECHO_OBJS)
 	$(CC) -o $@ $(ECHO_OBJS) $(LIBS)
 
 proj_echo.o: proj_echo.c libusb.h
+
