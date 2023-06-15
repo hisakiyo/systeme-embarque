@@ -38,6 +38,8 @@
 #include "Echo.h"
 
 unsigned char token[10]={'p','a','s','s','w','o','r','d','0','0'};
+// Variable to count try
+unsigned char try = 0;
 
 
 /** Main program entry point. This routine configures the hardware required by the application, then
@@ -136,15 +138,40 @@ void Handle_EP_IN(void)
 	{
 		if (strncmp(EP_Data, token, 10) == 0)
 		{
-			Endpoint_Write_8(0);
 			PORTB &= 0b10000000;
 			PORTB |= 0b00101010;
+			try = 0;
 		}
 		else
 		{
-			Endpoint_Write_8(1);
-			PORTB &= 0b10000000;
-			PORTB |= 0b01010101;
+			if(try == 0)
+			{
+				try++;
+				PORTB &= 0b10000000;
+				PORTB |= 0b00000001;
+			}
+			else if(try == 1)
+			{
+				try++;
+				PORTB &= 0b10000000;
+				PORTB |= 0b00000101;
+			}
+			else if(try == 2)
+			{
+				try++;
+				PORTB &= 0b10000000;
+				PORTB |= 0b00010101;
+			}
+			else
+			{
+				while(1) {
+					PORTB &= 0b10000000;
+					PORTB |= 0b00010101;
+					_delay_ms(1000);
+					PORTB &= 0b10000000;
+					_delay_ms(1000);
+				}
+			}
 		}
 
 		/* Finalize the stream transfer to send the last packet */
